@@ -58,11 +58,11 @@ namespace LabOne
         {
             if (isLive)
             {
-                return "God is alive!";
+                return "God is alive! ";
             }
             else
             {
-                return "God is Dead!";
+                return "God is Dead! ";
             }
         }
     }
