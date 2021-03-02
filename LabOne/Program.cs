@@ -62,7 +62,7 @@ namespace LabOne
             }
             else
             {
-                return "God is Die!";
+                return "God is Dead!";
             }
         }
     }
