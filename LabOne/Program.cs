@@ -1,136 +1,139 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 
 namespace LabOne
 {
- class Program
+  class Program
     {
         static void Main(string[] args)
         {
-            God newGod = God.GetGod(false);
-            Animal myAnimal = new Animal("dog", 4, false);
-            Human jack = new Human("Jack Doe", "primacy", true);
+            int[] arrInt32 = { 1, 1, 2, 3, 5, 8, 13, 1 };
+            new MyClass<int>(arrInt32).Task3();
 
-            myAnimal.Resurrect();
-            jack.Kill();
-            jack.Name = "Jonh Doe";
+            string[] arrString = { "Where ever something breathes", "Heart beating the rise and fall", "Of mountains, the waves upon the sky", "Of seas, the terror is our ignorance, that’s", "Why it is named after our home, earth" };
+            new MyClass<string>(arrString).Task3();
 
 
-            Console.WriteLine(newGod.GetInfo());
-            Console.WriteLine(myAnimal.GetInfo());
-            Console.WriteLine(jack.GetInfo());
+            Human[] arrHuman = { new Human(39, 167.3f, 10000.0f), new Human(6000.0f), new Human(4300.1f) };
+            new MyClass<Human>(arrHuman).Task3();
         }
     }
 
 
-    class God
+    class MyClass<T>
     {
-        private float researchPercentage;
-        protected bool isLive;
-        protected bool IsLifeSet
+
+        private T[] genericArray;
+
+
+        public MyClass(T[] genericArray)
         {
-            set { isLive = value; }
+            this.genericArray = genericArray;
         }
 
-        public bool IsLifeGet
-        {
-            get { return isLive; }
-        }
 
-        protected God(bool isLive) 
-        {
-            this.isLive = isLive;
-        }
 
-        private static God godInstance;
-        public static God GetGod(bool isLive)
+        public void Task3()
         {
-            if (godInstance == null)
+
+            if (typeof(T) == typeof(Int32))
             {
-                godInstance = new God(isLive);
+                int max = 0;
+                for(int i = 0; i < genericArray.Length; i++)
+                {
+                    int num = Convert.ToInt32(genericArray[i]);
+                    if (num > max)
+                    {
+                        max = num;
+                    }
+                }
+                Console.WriteLine("Max Number in Int32 Array is {0}", max);
             }
-            return godInstance;
-        }
+            else if (typeof(T) == typeof(Human))
+            {
 
-        public string GetInfo()
-        {
-            if (isLive)
-            {
-                return "God is alive! ";
+                float res = 0;
+                foreach (Human man in genericArray as Human[])
+                {
+                    res += man.Salary;
+                }
+                Console.WriteLine("Human array Salarys Sum: {0}", res);
+                
             }
-            else
+            else if(typeof(T) == typeof(string))
             {
-                return "God is Dead! ";
+                // A, E, I, O, U, and sometimes Y.
+                char[] vowel = { 'a', 'e', 'i', 'o', 'u', 'y' };
+
+                Console.Write("Find Vowels: ");
+                foreach (string str in genericArray as string[])
+                {
+                    foreach(char ch in str.ToLower())
+                    {
+                        char a = (Array.Find(vowel, ele => ele == ch));
+                        if(a != default(char))
+                        { 
+                            Console.Write(a + " ");
+                        }
+                            
+                    }
+                }
+                Console.WriteLine();
             }
         }
     }
 
-    class Animal : God
+    class Human
     {
-        private int legs;
-        public int Legs
+        private int age;
+        private float height;
+        private float salary;
+        public int Years
         {
-            set { legs = value; }
-            get { return legs; }
-        }
-        protected string animalKingdom;
-        public string AnimalKingdom
-        {
-            set { animalKingdom = value; }
-            get { return animalKingdom; }
-        }
-        public Animal(string animalKingdom, int legs, bool isLive) : base(isLive) 
-        {
-            this.AnimalKingdom = animalKingdom;
-            this.legs = legs;
-        }
-        protected Animal(string animalKingdom, bool isLive) : base(isLive)
-        {
-            this.AnimalKingdom = animalKingdom;
-        }
-
-        public void Kill()
-        {
-            if (isLive)
+            set
             {
-                isLive = false;
+                age = value;
+            }
+            get
+            {
+                return age;
             }
         }
-        public void Resurrect()
+        public float Height
         {
-            if (!isLive)
+            set
             {
-                isLive = true;
+                height = value;
+            }
+            get
+            {
+                return height;
             }
         }
 
-        public new string GetInfo()
+        public float Salary
         {
-            string res = animalKingdom + " " + legs + " " + (isLive ? "animal is alive." : "animal is dead.");
-            return res; 
+            set
+            {
+                salary = value;
+            }
+            get
+            {
+                return salary;
+            }
+        }           
+    
+        public Human(int age, float height, float salary)
+        {
+            this.age = age;
+            this.height = height;
+            this.salary = salary;
         }
-    }
-
-    class Human : Animal
-    {
-        private string name;
-        public string Name
+        public Human(float salary)
         {
-            set { name = value; }
-            get { return name; }
-        }
-
-        public Human(string name, string animalKingdom, bool isLive) : base(animalKingdom, isLive)
-        {
-            this.name = name;
-        }
-
-        public new string GetInfo()
-        {
-            string res = name + " is " + animalKingdom + " and  " + (isLive ? "is alive." : "is dead.");
-            return res;
+            this.salary = salary;
         }
     }
 }
