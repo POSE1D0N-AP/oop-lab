@@ -9,7 +9,7 @@ namespace LabOne
     {
         static void Main(string[] args)
         {
-            int[] arrInt32 = { 1, 1, 2, 3, 5, 8, 13, 1 };
+            int[] arrInt32 = { 1, 1, 2, 3, 5, 8, 13, 1, -1 };
             new MyClass<int>(arrInt32).Task3();
 
             string[] arrString = { "Where ever something breathes", "Heart beating the rise and fall", "Of mountains, the waves upon the sky", "Of seas, the terror is our ignorance, that’s", "Why it is named after our home, earth" };
