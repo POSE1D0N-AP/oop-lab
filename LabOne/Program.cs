@@ -5,76 +5,155 @@ using System.Linq;
 
 namespace LabOne
 {
-     class MrPresident
+public abstract class Device
     {
-        private string presidentName;
-        public string PresidentName
+        protected int number;
+
+        public int Number
         {
-            set
-            {
-                presidentName = value;
-            }
             get
             {
-                return presidentName;
+                return number;
             }
-        }
-
-        private string presidentSureName;
-        public string PresidentSureName
-        {
             set
             {
-                presidentSureName = value;
+                number = value;
             }
+        }
+
+        public Device(int number)
+        {
+            this.number = number;
+        }
+
+        public abstract void Action();
+    }
+
+
+    class MobileDevice : Device
+    {
+        public MobileDevice(int number) : base(number) { }
+        public override void Action()
+        {
+            Console.WriteLine($"Device {number} On");
+        }
+    }
+
+    abstract class Decorator : Device
+    {
+        protected Device myDevice;
+
+        public Device MyDevice
+        {
             get
             {
-                return presidentSureName;
+                return myDevice;
             }
         }
 
-        private int presidentSalary;
-        public int PresidentSalary
+        public Decorator(Device myDevice) : base(myDevice.Number)
         {
-            set
+            this.myDevice = myDevice;
+        }
+
+
+        public override void Action()
+        {
+            if (this.myDevice != null)
             {
-                presidentSalary = value;
+                this.myDevice.Action();
             }
-            get
-            {
-                return presidentSalary;
-            }
+            
+        }
+    }
+
+    class Racia : Decorator
+    {
+        public Racia(Device myDevice) : base(myDevice)
+        {
         }
 
-        private static MrPresident singletonPresident;
-
-        private MrPresident() 
-        { }
-
-        public static MrPresident GetPresident()
+        public override void Action()
         {
-            if (singletonPresident == null)
-            {
-                singletonPresident = new MrPresident();     
-            }
-            return singletonPresident;
+            base.Action();
+            Console.WriteLine($"GetConact with {myDevice.Number}");
+        }
+    }
+
+    class LandlinePhone : Decorator
+    {
+        public LandlinePhone(Device myDevice) : base(myDevice)
+        {
         }
 
-        public string PassLaw()
+        public override void Action()
         {
-            string[] laws = { "Dont Kill", "Dont Say", "Dont lie", "Dont thoughts" };
-            var rand = new Random();
-            return laws[rand.Next(4)];
+            base.Action();
+            Console.WriteLine($"Press the buttons on {myDevice.Number} device");
+        }
+    }
+
+    class MobilePhone : Decorator
+    {
+        public MobilePhone(Device myDevice) : base(myDevice)
+        {
         }
 
-        public void SignLaw(string law)
+        public override void Action()
         {
-            Console.WriteLine(law + " be signed.");
+            base.Action();
+            Console.WriteLine("On Light");
+        }
+    }
+
+    class SmartPhone : Decorator
+    {
+        public SmartPhone(Device myDevice) : base(myDevice)
+        {
         }
 
-        public void CancelLaw(string law)
+        public override void Action()
         {
-            Console.WriteLine(law + " cancelled.");
+            base.Action();
+            Console.WriteLine($"Open Instagram on {myDevice.Number}");
+
+        }
+    }
+
+    class Devices
+    {
+        public Device IPhone(Device md)
+        {
+
+            Racia rc = new Racia(md);
+            LandlinePhone lp = new LandlinePhone(rc);
+            MobilePhone mp = new MobilePhone(lp);
+            SmartPhone sp = new SmartPhone(mp);
+            return sp;
+        }
+
+        public Device Nokia(Device md)
+        {
+
+            Racia rc = new Racia(md);
+            LandlinePhone lp = new LandlinePhone(rc);
+            MobilePhone mp = new MobilePhone(lp);
+            return mp;
+        }
+
+        public Device Panasonic(Device md)
+        {
+
+            Racia rc = new Racia(md);
+            LandlinePhone lp = new LandlinePhone(rc);
+            return lp;
+        }
+
+        public Device Motorola(Device md)
+        {
+
+            Racia rc = new Racia(md);
+            return rc;
         }
     }
 
@@ -82,15 +161,12 @@ namespace LabOne
     {
         static void Main(string[] args)
         {
-            MrPresident mypresident = MrPresident.GetPresident();
-            mypresident.PresidentSureName = "Lenin";
-            MrPresident alsomypresident = MrPresident.GetPresident();
+            Devices d = new Devices();
 
+            Device myDevice = new MobileDevice(813);
 
-            Console.WriteLine(alsomypresident.PresidentSureName);
-
-            Console.WriteLine(mypresident.PassLaw());
-            
+            myDevice = d.IPhone(myDevice);
+            myDevice.Action();
         }
     }
 }
