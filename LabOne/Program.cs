@@ -5,168 +5,240 @@ using System.Linq;
 
 namespace LabOne
 {
-public abstract class Device
+ interface IHuman
     {
-        protected int number;
 
-        public int Number
+        int Age { get; }
+
+        void Drink();
+
+    }
+
+    abstract class Pensioner
+    {
+        protected int pensiya;
+        public int Pensiya
         {
             get
             {
-                return number;
-            }
-            set
-            {
-                number = value;
+                return pensiya;
             }
         }
-
-        public Device(int number)
+        public Pensioner(int pensiya)
         {
-            this.number = number;
+            this.pensiya = pensiya;
         }
 
-        public abstract void Action();
-    }
-
-
-    class MobileDevice : Device
-    {
-        public MobileDevice(int number) : base(number) { }
-        public override void Action()
+        public virtual void Vorchat()
         {
-            Console.WriteLine($"Device {number} On");
-        }
+            Console.WriteLine("Ворчит.");
+        } 
     }
 
-    abstract class Decorator : Device
+    abstract class WebDeveloper
     {
-        protected Device myDevice;
-
-        public Device MyDevice
+        protected string framework;
+        public string Fraemwork
         {
             get
             {
-                return myDevice;
+                return framework;
             }
         }
 
-        public Decorator(Device myDevice) : base(myDevice.Number)
+        public WebDeveloper(string fraemwork)
         {
-            this.myDevice = myDevice;
+            this.framework = fraemwork;
         }
 
-
-        public override void Action()
+        public virtual void Work()
         {
-            if (this.myDevice != null)
+            Console.WriteLine("Верстать");
+        }
+        public virtual void Work(int workHour)
+        {
+            Console.WriteLine("Страдать");
+        }
+
+    }
+    abstract class Domohozyaika
+    {
+        private string adres;
+        public string Adres
+        {
+            get
             {
-                this.myDevice.Action();
+                return adres;
             }
-            
+        }
+        public Domohozyaika(string adress)
+        {
+            this.adres = adress;
+        }
+
+        public virtual void Work() { }
+    }
+    abstract class Scholnik
+    {
+        private int schoolClass;
+        public int SchoolClass
+        {
+            get
+            {
+                return schoolClass;
+            }
+        }
+
+        public Scholnik(int schoolClass)
+        {
+            this.schoolClass = schoolClass;
+        }
+
+        public virtual void Edu() { }
+    }
+    abstract class Dedsadovec
+    {
+        private string group;
+        public string Group
+        {
+            get
+            {
+                return group;
+            }
+        }
+
+        public Dedsadovec(string group)
+        {
+            this.group = group;
         }
     }
 
-    class Racia : Decorator
+    class GrandFather : Pensioner, IHuman
     {
-        public Racia(Device myDevice) : base(myDevice)
+        int age;
+        public int Age { get { return age; } }
+
+
+        public GrandFather(int age, int pensiya = 100) : base(pensiya)
         {
+            this.age = age;
         }
 
-        public override void Action()
-        {
-            base.Action();
-            Console.WriteLine($"GetConact with {myDevice.Number}");
-        }
+        public void Drink() { }
+
     }
 
-    class LandlinePhone : Decorator
+    class GrandMother : Pensioner, IHuman
     {
-        public LandlinePhone(Device myDevice) : base(myDevice)
+        int age;
+        public int Age { get { return age; } }
+
+
+        public GrandMother(int age, int pensiya) : base(pensiya)
         {
+            this.age = age;
         }
 
-        public override void Action()
-        {
-            base.Action();
-            Console.WriteLine($"Press the buttons on {myDevice.Number} device");
-        }
+        public void Drink() { }
+
     }
 
-    class MobilePhone : Decorator
+    class Father : GrandFather
     {
-        public MobilePhone(Device myDevice) : base(myDevice)
+        protected static Father fatherInstance;
+
+        public static Father GetFather(int age)
         {
+            if (fatherInstance == null) fatherInstance = new Father(age);
+            return fatherInstance;
         }
 
-        public override void Action()
+        private Father(int age) : base(age)
         {
-            base.Action();
-            Console.WriteLine("On Light");
+
         }
+
+        public void Drink() { }
+
     }
 
-    class SmartPhone : Decorator
+    class Mother : Domohozyaika, IHuman
     {
-        public SmartPhone(Device myDevice) : base(myDevice)
+        int age;
+        public int Age { get { return age; } }
+
+        protected static Mother motherInstance;
+
+        public static Mother GetMother(string adress, int age)
         {
+            if (motherInstance == null) return new Mother(adress, age);
+            else return motherInstance;
         }
 
-        public override void Action()
+        private Mother(string adress, int age) : base(adress)
         {
-            base.Action();
-            Console.WriteLine($"Open Instagram on {myDevice.Number}");
-
+            this.age = age;
         }
+
+        public void Drink() { }
+
     }
 
-    class Devices
+    class Daughter : Scholnik, IHuman
     {
-        public Device IPhone(Device md)
-        {
+        private int age;
+        public int Age { get { return age; } }
 
-            Racia rc = new Racia(md);
-            LandlinePhone lp = new LandlinePhone(rc);
-            MobilePhone mp = new MobilePhone(lp);
-            SmartPhone sp = new SmartPhone(mp);
-            return sp;
+        public Daughter(int age, int schoolClass) : base(schoolClass)
+        {
+            this.age = age;
+        }
+        public void Drink() { }
+        public override void Edu() { Console.WriteLine("Edu"); }
+    }
+
+    class Son : Dedsadovec, IHuman
+    {
+        private int age;
+        public int Age { get { return age; } }
+
+        public Son(string group, int age) : base(group)
+        { 
+            this.age = age; 
+        }
+        public void Drink() { Console.WriteLine("Drink Sok"); }
+    }
+
+
+    class Semya
+    {
+        private List<IHuman> family;
+
+        public Semya()
+        {
+            family = new List<IHuman>();
+            family.Add(new GrandFather(66, 20));
+            family.Add(new GrandMother(66, 21));
+            family.Add(Father.GetFather(42));
+            family.Add(Mother.GetMother("42/13", 42));
+            family.Add(new Daughter(14, 7));
+            family.Add(new Son("Zebra", 4));
         }
 
-        public Device Nokia(Device md)
+        public void PrintSemya()
         {
-
-            Racia rc = new Racia(md);
-            LandlinePhone lp = new LandlinePhone(rc);
-            MobilePhone mp = new MobilePhone(lp);
-            return mp;
-        }
-
-        public Device Panasonic(Device md)
-        {
-
-            Racia rc = new Racia(md);
-            LandlinePhone lp = new LandlinePhone(rc);
-            return lp;
-        }
-
-        public Device Motorola(Device md)
-        {
-
-            Racia rc = new Racia(md);
-            return rc;
+            foreach(IHuman human in family)
+            {
+                Console.WriteLine(human.Age);
+            }
         }
     }
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Devices d = new Devices();
-
-            Device myDevice = new MobileDevice(813);
-
-            myDevice = d.IPhone(myDevice);
-            myDevice.Action();
+            new Semya().PrintSemya();
         }
     }
 }
